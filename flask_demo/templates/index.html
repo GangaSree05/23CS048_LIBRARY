@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Library Management System</h1>
+
+        <!-- Display error message -->
+        {% if request.args.get('error') %}
+            <div class="alert alert-danger" role="alert">
+                {{ request.args.get('error') }}
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Add Book
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('add_book') }}" method="post">
+                            <div class="form-group">
+                                <label for="title">Title:</label>
+                                <input type="text" id="title" name="title" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="author">Author:</label>
+                                <input type="text" id="author" name="author" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="isbn">ISBN:</label>
+                                <input type="text" id="isbn" name="isbn" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="copies">Number of Copies:</label>
+                                <input type="number" id="copies" name="copies" class="form-control" min="1" value="1" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Book</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Update Book
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('update_book') }}" method="post">
+                            <div class="form-group">
+                                <label for="isbn_update">ISBN:</label>
+                                <input type="text" id="isbn_update" name="isbn" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="title_update">New Title:</label>
+                                <input type="text" id="title_update" name="title" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="author_update">New Author:</label>
+                                <input type="text" id="author_update" name="author" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Book</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Delete Book
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('delete_book') }}" method="post">
+                            <div class="form-group">
+                                <label for="isbn_delete">ISBN:</label>
+                                <input type="text" id="isbn_delete" name="isbn" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-danger">Delete Book</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Add User
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('add_user') }}" method="post">
+                            <div class="form-group">
+                                <label for="name">Name:</label>
+                                <input type="text" id="name" name="name" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-success">Add User</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Borrow Book
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('borrow_book') }}" method="post">
+                            <div class="form-group">
+                                <label for="user_name_borrow">User Name:</label>
+                                <input type="text" id="user_name_borrow" name="user_name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="isbn_borrow">ISBN:</label>
+                                <input type="text" id="isbn_borrow" name="isbn" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning">Borrow Book</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Return Book
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('return_book') }}" method="post">
+                            <div class="form-group">
+                                <label for="user_name_return">User Name:</label>
+                                <input type="text" id="user_name_return" name="user_name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="isbn_return">ISBN:</label>
+                                <input type="text" id="isbn_return" name="isbn" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-info">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Book List</h2>
+        <ul class="list-group">
+            {% for book in books %}
+                <li class="list-group-item">
+                    <strong>{{ book.title }}</strong> by {{ book.author }} 
+                    <span>ISBN: {{ book.isbn }}</span>
+                    <span>{% if book.available %}Available{% else %}Not Available{% endif %} - Copies: {{ book.copies }}</span>
+                    <br>
+                    <strong>Borrowers:</strong>
+                    <ul>
+                        {% for borrower in book.borrowers %}
+                            <li>{{ borrower }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2 class="mt-4">User List</h2>
+        <ul class="list-group">
+            {% for user in users %}
+                <li class="list-group-item">
+                    <strong>{{ user.name }}</strong>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
